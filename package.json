@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "test": "mocha --require ts-node/register ./test/api",
+    "test": "mocha --require ts-node/register tests.ts",
     "madge:circular": "./node_modules/.bin/madge --extensions js,ts,tsx --circular app/",
     "tsc": "tsc"
   },

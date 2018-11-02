@@ -79,3 +79,5 @@ public/consents/*.txt
 public/consents/*.dat
 
 .cache-require-paths.json
+
+scratch.ts
