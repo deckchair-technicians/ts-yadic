@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "target": "es6",
+    "noImplicitAny": false,
+    "noImplicitThis": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "strictNullChecks": false,
+    "experimentalDecorators": true,
+    "jsx": "preserve",
+    "lib": [ "dom", "es2017" ]
+  },
+  "exclude": ["lib", "node_modules"]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@deckchair-technicians/yadic-ts",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "test": "mocha --require ts-node/register ./test/api",
+    "madge:circular": "./node_modules/.bin/madge --extensions js,ts,tsx --circular app/",
+    "tsc": "tsc"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.4",
+    "@types/mocha": "^5.2.5",
+    "chai": "^4.1.4",
+    "mocha": "^5.2.0",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.0.3"
+  }
+}
