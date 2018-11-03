@@ -1,14 +1,20 @@
 {
   "name": "@deckchair-technicians/yadic-ts",
   "version": "0.0.1",
-  "private": true,
+  "description": "Lazily compute dependency graphs",
+
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+
   "scripts": {
-    "test": "mocha --require ts-node/register tests.ts",
+    "test": "mocha --require ts-node/register test/**/*.test.ts",
     "madge:circular": "./node_modules/.bin/madge --extensions js,ts,tsx --circular app/",
     "tsc": "tsc"
   },
+
   "dependencies": {
   },
+
   "devDependencies": {
     "@types/chai": "^4.1.4",
     "@types/mocha": "^5.2.5",
