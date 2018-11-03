@@ -1,9 +1,10 @@
-export function addGetter<T, K extends keyof T>(obj: T, key: K, getter: () => T[K], descriptor?: PropertyDescriptor): void {
+export function addGetter<T, K extends keyof T>(obj: T, key: K, getter: () => T[K], descriptor?: PropertyDescriptor): T {
   Object.defineProperty(obj, key, {
     enumerable: true,
     get: getter,
     ...(descriptor || {})
   });
+  return obj;
 }
 
 export type GetterMapper<A, B extends { [K in keyof A]: B[K] }> = <K extends keyof A>(instance: B, k: K) => () => B[K];

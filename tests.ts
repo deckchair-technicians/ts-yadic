@@ -1,32 +1,32 @@
 import {expect} from "chai";
-import {Activators} from "./activators";
-import {intersect} from "./util/dynamagic";
 import * as lazy from "./containers/lazy";
-import * as pojo from "./containers/pojo";
+import * as missing from "./containers/missing";
+import {Activators} from "./activators";
+import {rollup} from "./containers/lazy";
 
-describe("pojo.container", () => {
+describe("missing.container", () => {
   it("Just returns values from underlying object", () => {
-    const c = pojo.container({a: "value"});
+    const c = missing.container({a: "value"});
 
     const value = c.a;
     expect(value).eq("value");
   });
   it("Is immutable", () => {
-    const c = pojo.container({a: "value"});
+    const c = missing.container({a: "value"});
 
     expect(() => c.a = "TEST").throws(/Cannot set property/);
   });
-  it("Throws an error if values are undefined", () => {
-    const c = pojo.container({a: undefined});
-
-    expect(() => c.a).throws("'a' was undefined");
-  });
   it("Calls missing function if value is undefined", () => {
-    const c = pojo.container({a: undefined}, (k) => `MISSING ${k}`);
+    const c = missing.container({a: undefined}, (t, k) => `MISSING ${k}`);
 
     const value = c.a;
     expect(value).eq("MISSING a");
-  })
+  });
+  it("Defaults to throwing errors on missing values", () => {
+    const c = missing.container({a: undefined});
+
+    expect(() => c.a).throws("'a' was undefined");
+  });
 });
 
 describe("lazy.container", () => {
@@ -34,21 +34,25 @@ describe("lazy.container", () => {
     type Thing = {
       a: string;
     }
-    const c = lazy.container<Thing>({a: (thing: Thing) => "a value"});
+    const c = lazy.standalone({a: (_: Thing) => "a value"});
 
     expect(c.a).eq("a value");
   });
 
+  it("Is lazy", () => {
+    let called: boolean = false;
+    const _ = lazy.standalone({a: () => called = true});
+
+    expect(called).eq(false);
+  });
+
   it("Only calls the activator once, then caches the value", () => {
-    type Thing = {
-      a: number;
-    }
-    const c = lazy.container<Thing>({a: (thing: Thing) => Math.random()});
+    const c = lazy.standalone({a: () => Math.random()});
 
     expect(c.a).eq(c.a);
   });
   it("Is immutable", () => {
-    const c = lazy.container({a: () => "value"});
+    const c = lazy.standalone({a: () => "value"});
 
     expect(() => c.a = "TEST").throws(/Cannot set property/);
   });
@@ -67,7 +71,7 @@ describe("lazy.container", () => {
     // b depends on a
     // c depends on a and b
     const aActivators: Activators<A> = {
-      a: (container: A) => {
+      a: (_: A) => {
         return "value a"
       }
     };
@@ -82,13 +86,12 @@ describe("lazy.container", () => {
       }
     };
 
-    type Dependencies = A & B & C;
-    const merged: Activators<Dependencies> = intersect(aActivators, bActivators, cActivators);
-
-    const dependencies = lazy.container<Dependencies>(merged);
+    const dependencies: C & A & B = rollup(aActivators, bActivators, cActivators);
 
     expect(dependencies.a).eq("value a");
     expect(dependencies.b).eq("b saw: 'value a'");
     expect(dependencies.c).eq("c combined a and b: {a: \"value a\", b: \"b saw: 'value a'\"}");
   });
+
+
 });
