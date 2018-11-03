@@ -1,31 +1,31 @@
 import {expect} from "chai";
 import {Activators, containers} from "../";
-
+const lazy = containers.lazy;
 describe("containers.lazy", () => {
   it("Returns values from activator", () => {
     type Thing = {
       a: string;
     }
-    const c = containers.lazy({a: (_: Thing) => "a value"});
+    const c = lazy.standalone({a: (_: Thing) => "a value"});
 
     expect(c.a).eq("a value");
   });
 
   it("Is lazy", () => {
     let called: boolean = false;
-    const _ = containers.lazy({a: () => called = true});
+    const _ = lazy.standalone({a: () => called = true});
 
     expect(called).eq(false);
   });
 
   it("Only calls the activator once, then caches the value", () => {
-    const c = containers.lazy({a: () => Math.random()});
+    const c = lazy.standalone({a: () => Math.random()});
 
     expect(c.a).eq(c.a);
   });
 
   it("Is immutable", () => {
-    const c = containers.lazy({a: () => "value"});
+    const c = lazy.standalone({a: () => "value"});
 
     expect(() => c.a = "TEST").throws(/Cannot set property/);
   });
@@ -62,7 +62,7 @@ describe("containers.lazy", () => {
       }
     };
 
-    const dependencies: C & A & B = containers.rollup([aActivators, bActivators, cActivators]);
+    const dependencies: C & A & B = containers.rollup([aActivators, bActivators, cActivators], lazy.dependent);
 
     expect(dependencies.a).eq("value a");
     expect(dependencies.b).eq("b saw: value a");
@@ -71,7 +71,7 @@ describe("containers.lazy", () => {
 
   it("Supports decoration", () => {
     const original = {a: () => "original"};
-    const decorated = {a: (thing) => `decorated ${thing.a}`};
+    const decorated = {a: (thing:any) => `decorated ${thing.a}`};
 
     const c = containers.rollup([original, decorated]);
 
@@ -82,9 +82,9 @@ describe("containers.lazy", () => {
     let originalCallCount = 0;
     let decoratedCallCount = 0;
     const original = {a: () => ++originalCallCount};
-    const decorated = {a: (thing) => thing.a + ++decoratedCallCount};
+    const decorated = {a: (thing:any) => thing.a + ++decoratedCallCount};
 
-    const c = containers.rollup([original, decorated]);
+    const c = containers.rollup([original, decorated], lazy.dependent);
 
     expect(c.a).eq(2);
     expect(c.a).eq(2);
@@ -127,11 +127,11 @@ describe("containers.lazy", () => {
       }
     };
 
-    const dependencies = containers.rollup([aActivators, aDecorator, bActivators, cActivators]);
+    const dependencies = containers.rollup([aActivators, aDecorator, bActivators, cActivators], lazy.dependent);
 
     expect(dependencies.a).eq("decorated value a");
     expect(dependencies.b).eq("b saw: 'decorated value a'");
     expect(dependencies.c).eq("c combined a and b: {a: \"decorated value a\", b: \"b saw: 'decorated value a'\"}");
   });
 
-})
+});

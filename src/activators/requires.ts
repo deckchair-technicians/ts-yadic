@@ -12,12 +12,13 @@ export type RequireFn<T, K extends keyof T, V> = (c: Pick<T, K>) => V;
  * This is in case it is important that property getters are called (to report that they are undefined, for
  * example.
  */
-export function requires<T, K extends keyof T, V>(keys: K[], fn: RequireFn<T, K, V>) {
+export function requires<T, K extends keyof T, V>(keys: K[], fn: RequireFn<T, K, V>) : (c:T)=>V{
   return (c: T) => {
     const plucked = pluck(c, keys);
     for (const key in plucked) {
       if (plucked[key] === undefined)
-        return undefined;
+        // TODO: there should be no casting here. Need T[k] to extend undefined
+        return undefined as any as V;
     }
     return fn(plucked);
   }

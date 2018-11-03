@@ -2,10 +2,10 @@ import {Activators} from "../activators";
 import * as l from "./lazy";
 import * as m from "./missing";
 
-export const lazy = l.container;
+export const lazy = l;
 export const missing = m.container;
 
-export type ContainerConstructor = <T, D>(activators: Activators<T, D>, dependencies?: D) => T & D;
+export type ContainerConstructor = <T, D>(activators: Activators<T, D>, dependencies: D) => T & D;
 
 export function rollup<A, B>
 (_: [Activators<A>,
@@ -59,6 +59,6 @@ export function rollup<A, B, C, D, E, F, G>
   : A & B & C & D & E & F & G;
 
 export function rollup(activators: Activators<any, any>[],
-                       containerCtor: ContainerConstructor = lazy) {
+                       containerCtor: ContainerConstructor = lazy.dependent) {
   return activators.reduce((result, activators) => containerCtor(activators, result), {});
 }

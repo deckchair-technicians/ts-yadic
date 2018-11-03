@@ -1,9 +1,9 @@
 import {GetterMapper, mapGetters} from "../util/dynamagic";
 
 export function record<T>(missing: Set<keyof T> = new Set<keyof T>()): MissingKeyFn<T> {
-  return (c: T, k: keyof T) => {
+  return <K extends keyof T>(c: T, k: K) => {
     missing.add(k);
-    return undefined;
+    return undefined as any as T[K];
   }
 }
 

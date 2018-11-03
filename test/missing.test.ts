@@ -14,7 +14,10 @@ describe("containers.missing", () => {
     expect(() => c.a = "TEST").throws(/Cannot set property/);
   });
   it("Calls missing function if value is undefined", () => {
-    const c = containers.missing({a: undefined}, (t, k) => `MISSING ${k}`);
+    type Thing = {
+      a?: string;
+    }
+    const c = containers.missing<Thing>({a: undefined}, (t, k) => `MISSING ${k}`);
 
     const value = c.a;
     expect(value).eq("MISSING a");
@@ -24,4 +27,4 @@ describe("containers.missing", () => {
 
     expect(() => c.a).throws("'a' was undefined");
   });
-})
+});
