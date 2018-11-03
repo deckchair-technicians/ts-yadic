@@ -29,3 +29,14 @@ export function pluck<T, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
   }
   return ret;
 }
+
+function replace<T extends {}, K extends keyof T>(object: T, key: K, value: T[K]): T {
+  return Object.defineProperty(object, key, {value});
+}
+
+/**
+ * See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get#Smart_self-overwriting_lazy_getters
+ */
+export function lazy<T extends {}, K extends keyof T>(object: T, key: K, value: T[K]): T[K] {
+  return replace(object, key, value)[key];
+}

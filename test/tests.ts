@@ -1,29 +1,26 @@
 import {expect} from "chai";
-import * as lazy from "./containers/lazy";
-import {rollup} from "./containers/lazy";
-import * as missing from "./containers/missing";
-import {Activators} from "./activators";
+import {Activators, containers} from "../"
 
 describe("missing.container", () => {
   it("Just returns values from underlying object", () => {
-    const c = missing.container({a: "value"});
+    const c = containers.missing({a: "value"});
 
     const value = c.a;
     expect(value).eq("value");
   });
   it("Is immutable", () => {
-    const c = missing.container({a: "value"});
+    const c = containers.missing({a: "value"});
 
     expect(() => c.a = "TEST").throws(/Cannot set property/);
   });
   it("Calls missing function if value is undefined", () => {
-    const c = missing.container({a: undefined}, (t, k) => `MISSING ${k}`);
+    const c = containers.missing({a: undefined}, (t, k) => `MISSING ${k}`);
 
     const value = c.a;
     expect(value).eq("MISSING a");
   });
   it("Defaults to throwing errors on missing values", () => {
-    const c = missing.container({a: undefined});
+    const c = containers.missing({a: undefined});
 
     expect(() => c.a).throws("'a' was undefined");
   });
@@ -34,25 +31,25 @@ describe("lazy.container", () => {
     type Thing = {
       a: string;
     }
-    const c = lazy.standalone({a: (_: Thing) => "a value"});
+    const c = containers.lazy({a: (_: Thing) => "a value"});
 
     expect(c.a).eq("a value");
   });
 
   it("Is lazy", () => {
     let called: boolean = false;
-    const _ = lazy.standalone({a: () => called = true});
+    const _ = containers.lazy({a: () => called = true});
 
     expect(called).eq(false);
   });
 
   it("Only calls the activator once, then caches the value", () => {
-    const c = lazy.standalone({a: () => Math.random()});
+    const c = containers.lazy({a: () => Math.random()});
 
     expect(c.a).eq(c.a);
   });
   it("Is immutable", () => {
-    const c = lazy.standalone({a: () => "value"});
+    const c = containers.lazy({a: () => "value"});
 
     expect(() => c.a = "TEST").throws(/Cannot set property/);
   });
@@ -86,7 +83,7 @@ describe("lazy.container", () => {
       }
     };
 
-    const dependencies: C & A & B = rollup(aActivators, bActivators, cActivators);
+    const dependencies: C & A & B = containers.rollup([aActivators, bActivators, cActivators]);
 
     expect(dependencies.a).eq("value a");
     expect(dependencies.b).eq("b saw: value a");
@@ -96,7 +93,7 @@ describe("lazy.container", () => {
     const original = {a: () => "original"};
     const decorated = {a: (thing) => `decorated ${thing.a}`};
 
-    const c = rollup(original, decorated);
+    const c = containers.rollup([original, decorated]);
 
     expect(c.a).eq("decorated original");
   });
@@ -106,7 +103,7 @@ describe("lazy.container", () => {
     const original = {a: () => ++originalCallCount};
     const decorated = {a: (thing) => thing.a + ++decoratedCallCount};
 
-    const c = rollup(original, decorated);
+    const c = containers.rollup([original, decorated]);
 
     expect(c.a).eq(2);
     expect(c.a).eq(2);
@@ -148,7 +145,7 @@ describe("lazy.container", () => {
       }
     };
 
-    const dependencies = rollup(aActivators, aDecorator, bActivators, cActivators);
+    const dependencies = containers.rollup([aActivators, aDecorator, bActivators, cActivators]);
 
     expect(dependencies.a).eq("decorated value a");
     expect(dependencies.b).eq("b saw: 'decorated value a'");

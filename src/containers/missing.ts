@@ -9,7 +9,7 @@ export function record<T>(missing: Set<keyof T> = new Set<keyof T>()): MissingKe
 
 export type MissingKeyFn<T> = <K extends keyof T>(t: T, k: K) => T[K]
 
-export function error <T, K extends keyof T>(t: T, k: K) : T[K]{
+export function error<T, K extends keyof T>(t: T, k: K): T[K] {
   throw new Error(`'${k}' was undefined in ${Object.keys(t)}`)
 }
 

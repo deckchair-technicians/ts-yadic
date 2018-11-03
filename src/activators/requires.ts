@@ -1,6 +1,6 @@
 import {pluck} from "../util/dynamagic";
 
-type RequireFn<T, K extends keyof T, V> = (c: Pick<T, K>) => V;
+export type RequireFn<T, K extends keyof T, V> = (c: Pick<T, K>) => V;
 
 /**
  * Return a function that plucks keys from its parameter, and passes the resulting
