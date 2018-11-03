@@ -18,7 +18,10 @@ export function mapGetters<A, B extends { [K in keyof A]: B[K] }>(from: A, mappe
 export function replaceGetter<T, K extends keyof T>(t: T, k: K, getter: () => T[K]): T {
   return Object
     .keys(t)
-    .reduce((o, thisKey) => addGetter(o, k as any, thisKey === k ? getter : ()=>t[k]), <T>{});
+    .reduce((o, thisKey) => {
+        return addGetter(o, k as any, thisKey === k ? getter : () => t[k])
+      }, <T>{}
+    );
 }
 
 
