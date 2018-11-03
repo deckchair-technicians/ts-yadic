@@ -1,5 +1,5 @@
-import {addGetter} from "../util/dynamagic";
-import {Activators} from "../activators/index";
+import {addGetter, replaceGetter} from "../util/dynamagic";
+import {Activators} from "../activators";
 
 export function replace<T extends {}, K extends keyof T>(object: T, key: K, value: T[K]): T {
   return Object.defineProperty(object, key, {value});
@@ -12,28 +12,39 @@ export function lazy<T extends {}, K extends keyof T>(object: T, key: K, value: 
   return replace(object, key, value)[key];
 }
 
-function addActivatorGetters<T>(activators: Activators<T, any>, result): T {
-  Object
-    .keys(activators)
-    .reduce((o, k) => addGetter(o, k as keyof T, () => lazy(o, k as keyof T, activators[k](o)), {configurable: true}), result);
-  return result;
-}
 
 /**
  * Returns an object that lazily calls activators for key values, then caches the result.
  */
 export function standalone<T>(activators: Activators<T, {}>): T {
-  return addActivatorGetters(activators, {});
+  return dependent(activators, {});
 }
 
 /**
  * Returns an object that lazily calls activators for key values, then caches the result.
  */
 export function dependent<T, D>(activators: Activators<T, D>, dependencies: D): T & D {
-  const result = addActivatorGetters(activators, {}) as T & D;
+  const result = <T & D>{};
+  const getFromDependencies = (o, k) => addGetter(o, k as keyof T & D, () => dependencies[k]);
+
   Object
     .keys(dependencies)
-    .reduce((o, k) => addGetter(o, k as keyof T & D, () => dependencies[k]), result);
+    .reduce(getFromDependencies, result);
+
+  const activate = (o, k) => activators[k](o);
+  const decorate = (o, k) => {
+    return activators[k](replaceGetter(o, k, () => dependencies[k]));
+  };
+
+  const decorateOrActivate = (o, k) => {
+    const wat = o.hasOwnProperty(k) ? decorate : activate;
+    return addGetter(o, k as keyof T & D,
+      () => lazy(o, k as keyof T & D, wat(o, k)))
+  };
+  Object
+    .keys(activators)
+    .reduce(decorateOrActivate, result);
+
   return result;
 }
 
