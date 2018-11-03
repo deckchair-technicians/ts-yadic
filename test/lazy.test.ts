@@ -1,32 +1,7 @@
 import {expect} from "chai";
-import {Activators, containers} from "../"
+import {Activators, containers} from "../";
 
-describe("missing.container", () => {
-  it("Just returns values from underlying object", () => {
-    const c = containers.missing({a: "value"});
-
-    const value = c.a;
-    expect(value).eq("value");
-  });
-  it("Is immutable", () => {
-    const c = containers.missing({a: "value"});
-
-    expect(() => c.a = "TEST").throws(/Cannot set property/);
-  });
-  it("Calls missing function if value is undefined", () => {
-    const c = containers.missing({a: undefined}, (t, k) => `MISSING ${k}`);
-
-    const value = c.a;
-    expect(value).eq("MISSING a");
-  });
-  it("Defaults to throwing errors on missing values", () => {
-    const c = containers.missing({a: undefined});
-
-    expect(() => c.a).throws("'a' was undefined");
-  });
-});
-
-describe("lazy.container", () => {
+describe("containers.lazy", () => {
   it("Returns values from activator", () => {
     type Thing = {
       a: string;
@@ -48,11 +23,13 @@ describe("lazy.container", () => {
 
     expect(c.a).eq(c.a);
   });
+
   it("Is immutable", () => {
     const c = containers.lazy({a: () => "value"});
 
     expect(() => c.a = "TEST").throws(/Cannot set property/);
   });
+
   it("Can combine activators that depend on one another", () => {
     type A = {
       a: string;
@@ -65,18 +42,20 @@ describe("lazy.container", () => {
     }
 
     // a depends on nothing
-    // b depends on a
-    // c depends on a and b
     const aActivators: Activators<A> = {
       a: (_: A) => {
         return "value a"
       }
     };
+
+    // b depends on a
     const bActivators: Activators<B, A> = {
       b: (container: A) => {
         return "b saw: " + container.a
       }
     };
+
+    // c depends on a and b
     const cActivators: Activators<C, A & B> = {
       c: (container: A & B) => {
         return `c combined a and b- a: ${container.a}; b: ${container.b}`
@@ -89,6 +68,7 @@ describe("lazy.container", () => {
     expect(dependencies.b).eq("b saw: value a");
     expect(dependencies.c).eq("c combined a and b- a: value a; b: b saw: value a");
   });
+
   it("Supports decoration", () => {
     const original = {a: () => "original"};
     const decorated = {a: (thing) => `decorated ${thing.a}`};
@@ -97,6 +77,7 @@ describe("lazy.container", () => {
 
     expect(c.a).eq("decorated original");
   });
+
   it("Decoration is still lazy", () => {
     let originalCallCount = 0;
     let decoratedCallCount = 0;
@@ -110,7 +91,8 @@ describe("lazy.container", () => {
     expect(originalCallCount).eq(1);
     expect(decoratedCallCount).eq(1);
   });
-  it("Supports decoration in complex circumstances", () => {
+
+  it("Supports decoration with a long chain", () => {
     type A = {
       a: string;
     }
@@ -152,4 +134,4 @@ describe("lazy.container", () => {
     expect(dependencies.c).eq("c combined a and b: {a: \"decorated value a\", b: \"b saw: 'decorated value a'\"}");
   });
 
-});
+})
