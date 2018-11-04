@@ -1,13 +1,13 @@
-import {addGetter, lazy} from "../util/dynamagic";
+import {addGetter, lazyGetter} from "../util/magic";
 import {Activators} from "../activators";
 
 
-export function container<T>(activators: Activators<T>): T {
+export function lazy<T>(activators: Activators<T>): T {
   const result = <T>{};
   Object
     .keys(activators)
     .reduce((o, k) => {
-        const getter = () => lazy(o, k as keyof T, activators[k](o));
+        const getter = () => lazyGetter(o, k as keyof T, activators[k](o));
         return addGetter(o, k as keyof T, getter)
       },
       result);
