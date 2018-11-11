@@ -1,16 +1,15 @@
 import {addGetter, lazyGetter, mapGetters} from "../util/magic";
 import {Activator, Activators} from "./index";
 
-function decoratingActivator<T, K extends keyof T>(k: K, old: Activator<T, K>, activator: Activator<T, K>): Activator<T, K> {
-  return (container: T) => {
-    const fudgedContainer: T = mapGetters(
-      container,
-      (orginal: T, mapped: T, k1: keyof T): any => {
-        return k1 as any === k
-          ? () => lazyGetter(mapped, k1, old(mapped) as any)
-          : () => container[k1]
-      });
-    return activator(fudgedContainer);
+function decoratingActivator<T, K extends keyof T>(k: K, oldActivator: Activator<T, K>, activator: Activator<T, K>): Activator<T, K> {
+  return (container: T, k: K) => {
+    let mapper = (orginal: T, newContainer: T, k1: keyof T): any => {
+      return k1 as any === k
+        ? () => lazyGetter(newContainer, k1, oldActivator(newContainer, k1 as any) as any)
+        : () => container[k1]
+    };
+    const fudgedContainer: T = mapGetters(container, mapper);
+    return activator(fudgedContainer, k);
   }
 }
 

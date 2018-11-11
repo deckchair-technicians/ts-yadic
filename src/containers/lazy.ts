@@ -7,7 +7,7 @@ export function lazy<T>(activators: Activators<T>): T {
   Object
     .keys(activators)
     .reduce((o, k) => {
-        const getter = () => lazyGetter(o, k as keyof T, activators[k](o));
+        const getter = () => lazyGetter(o, k as keyof T, activators[k](o, k));
         return addGetter(o, k as keyof T, getter)
       },
       result);
