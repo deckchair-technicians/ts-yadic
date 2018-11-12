@@ -7,7 +7,6 @@
     "outDir": "./dist",
     "noImplicitAny": false,
     "skipLibCheck": true,
-    "esModuleInterop": true,
     "jsx": "preserve",
     "lib": [ "dom", "es2017" ]
   },
