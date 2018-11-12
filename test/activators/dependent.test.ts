@@ -1,4 +1,4 @@
-import {Activators, rollup} from "../../src/activators";
+import {Activators, dependent, rollup} from "../../src/activators";
 import {lazy} from "../../src/containers";
 import {expect} from "chai";
 
@@ -40,6 +40,57 @@ describe("activators.dependent", () => {
       expect(dependencies.a).eq("value a");
       expect(dependencies.b).eq("b saw: value a");
       expect(dependencies.c).eq("c combined a and b- a: value a; b: b saw: value a");
+    });
+
+    it("Can combine activators that do not depend on one another", () => {
+      type A = {
+        a: string;
+      }
+      type B = {
+        b: string;
+      }
+      type C = {
+        c: string;
+      }
+      type D = {
+        d: string;
+      }
+
+      // a depends on nothing
+      const aActivators: Activators<A> = {
+        a: (_: A) => {
+          return "value a"
+        }
+      };
+
+      // b depends on nothing
+      const bActivators: Activators<B> = {
+        b: (container: B) => {
+          return "value b"
+        }
+      };
+
+      // c depends on a
+      const cActivators: Activators<C, A> = {
+        c: (container: A) => {
+          return `c saw ${container.a}`
+        }
+      };
+
+      // c depends on b
+      const dActivators: Activators<D, B> = {
+        d: (container: B) => {
+          return `d saw ${container.b}`
+        }
+      };
+
+
+      const dependencies: D & C & A & B = lazy(rollup(aActivators, cActivators, bActivators, dActivators));
+
+      expect(dependencies.a).eq("value a");
+      expect(dependencies.b).eq("value b");
+      expect(dependencies.c).eq("c saw value a");
+      expect(dependencies.d).eq("d saw value b");
     });
 
     it("Supports decoration", () => {

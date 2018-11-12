@@ -13,73 +13,74 @@ function decoratingActivator<T, K extends keyof T>(k: K, oldActivator: Activator
   }
 }
 
-export function dependent<T, D>(activators: Activators<T, D>, dependencies: Activators<D>): Activators<T & D> {
-  const result = <Activators<T & D>>{};
+export function dependent<T, D extends DS, DS>(activators: Activators<T, D>, dependencies: Activators<DS>): Activators<T & DS> {
+  const result = <Activators<T & DS>>{};
   const getFromDependencies = (reduced, k) => addGetter(reduced, k as keyof T & D, () => dependencies[k]);
 
   Object
     .keys(dependencies)
     .reduce(getFromDependencies, result);
 
-  const decorateOrActivate = <K extends keyof T & D>(reduced: Activators<T & D>, k: K): Activators<T & D> => {
+  const decorateOrActivate = <K extends keyof T & DS>(reduced: Activators<T & DS>, k: K): Activators<T & DS> => {
+    const newActivator: Activator<T & DS, K> = activators[k] as any;
     if (k in reduced) // decorate
     {
       const old = reduced[k];
-      return addGetter(reduced, k, () => decoratingActivator<T & D, K>(k, old, activators[k]));
+      return addGetter(reduced, k, () => decoratingActivator<T & DS, K>(k, old, newActivator));
     }
 
-    return addGetter(reduced, k, () => activators[k] as Activator<T & D, K>)
+    return addGetter(reduced, k, () => newActivator as Activator<T & DS, K>)
   };
 
   return Object
     .keys(activators)
-    .map(k => k as keyof T & D)
+    .map(k => k as keyof T & DS)
     .reduce(decorateOrActivate, result);
 }
 
 
 export function rollup<A, B>
-(a: Activators<A>,
+(a: Activators<A, B>,
  b: Activators<B, A>)
   : Activators<A & B>;
 
 export function rollup<A, B, C>
-(a: Activators<A>,
- b: Activators<B, A>,
+(a: Activators<A, B & C>,
+ b: Activators<B, A & C>,
  c: Activators<C, A & B>)
   : Activators<A & B & C>;
 
 export function rollup<A, B, C, D>
-(a: Activators<A>,
- b: Activators<B, A>,
- c: Activators<C, A & B>,
+(a: Activators<A, B & C & D>,
+ b: Activators<B, A & C & D>,
+ c: Activators<C, A & B & D>,
  d: Activators<D, A & B & C>)
   : Activators<A & B & C & D>;
 
 export function rollup<A, B, C, D, E>
-(a: Activators<A>,
- b: Activators<B, A>,
- c: Activators<C, A & B>,
- d: Activators<D, A & B & C>,
+(a: Activators<A, B & C & D & E>,
+ b: Activators<B, A & C & D & E>,
+ c: Activators<C, A & B & D & E>,
+ d: Activators<D, A & B & C & E>,
  e: Activators<E, A & B & C & D>)
   : Activators<A & B & C & D & E>;
 
 export function rollup<A, B, C, D, E, F>
-(a: Activators<A>,
- b: Activators<B, A>,
- c: Activators<C, A & B>,
- d: Activators<D, A & B & C>,
- e: Activators<E, A & B & C & D>,
+(a: Activators<A, B & C & D & E & F>,
+ b: Activators<B, A & C & D & E & F>,
+ c: Activators<C, A & B & D & E & F>,
+ d: Activators<D, A & B & C & E & F>,
+ e: Activators<E, A & B & C & D & F>,
  f: Activators<F, A & B & C & D & E>)
   : Activators<A & B & C & D & E & F>;
 
 export function rollup<A, B, C, D, E, F, G>
-(a: Activators<A>,
- b: Activators<B, A>,
- c: Activators<C, A & B>,
- d: Activators<D, A & B & C>,
- e: Activators<E, A & B & C & D>,
- f: Activators<F, A & B & C & D & E>,
+(a: Activators<A, B & C & D & E & F & G>,
+ b: Activators<B, A & C & D & E & F & G>,
+ c: Activators<C, A & B & D & E & F & G>,
+ d: Activators<D, A & B & C & E & F & G>,
+ e: Activators<E, A & B & C & D & F & G>,
+ f: Activators<F, A & B & C & D & E & G>,
  g: Activators<G, A & B & C & D & E & F>)
   : Activators<A & B & C & D & E & F & G>;
 
