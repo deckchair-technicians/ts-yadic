@@ -1,7 +1,5 @@
-import {Activators, rollup} from "../../src/activators";
-import {lazy} from "../../src/containers";
 import {expect} from "chai";
-import {wait} from "../../src/activators/async";
+import {wait, lazy, Activators, rollup} from "../..";
 
 describe("asynchronous activators", () => {
     it("Activators that return promises work as you'd expect", async () => {
