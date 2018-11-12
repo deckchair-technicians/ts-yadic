@@ -1,7 +1,5 @@
 import {pluck} from "../util/magic";
 
-export type RequireFn<T, K extends keyof T, V> = (c: Pick<T, K>) => V;
-
 /**
  * Return a function that plucks keys from its parameter, and passes the resulting
  * object to fn.
@@ -12,7 +10,7 @@ export type RequireFn<T, K extends keyof T, V> = (c: Pick<T, K>) => V;
  * This is in case it is important that property getters are called (to report that they are undefined, for
  * example.
  */
-export function requires<T, K extends keyof T, V>(keys: K[], fn: RequireFn<T, K, V>) : (container:T)=>V{
+export function requires<T, K extends keyof T, V>(keys: K[], fn: (c: Pick<T, K>) => V) : (container:T)=>V{
   return (container: T) => {
     const plucked = pluck(container, keys);
     for (const k in plucked) {
