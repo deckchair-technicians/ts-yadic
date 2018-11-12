@@ -41,7 +41,7 @@ export function dependent<T, D>(activators: Activators<T, D>, dependencies: Acti
 export function rollup<A, B>
 (a: Activators<A>,
  b: Activators<B, A>)
-  : Activators<Activators<A & B>>;
+  : Activators<A & B>;
 
 export function rollup<A, B, C>
 (a: Activators<A>,
