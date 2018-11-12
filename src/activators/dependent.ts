@@ -40,14 +40,14 @@ export function dependent<T, D extends DS, DS>(activators: Activators<T, D>, dep
 
 
 export function rollup<A, B>
-(a: Activators<A, B>,
- b: Activators<B, A>)
+(a: Activators<A, A & B>,
+ b: Activators<B, A & B>)
   : Activators<A & B>;
 
 export function rollup<A, B, C>
-(a: Activators<A, B & C>,
- b: Activators<B, A & C>,
- c: Activators<C, A & B>)
+(a: Activators<A, A & B & C>,
+ b: Activators<B, A & B & C>,
+ c: Activators<C, A & B & C>)
   : Activators<A & B & C>;
 
 export function rollup<A, B, C, D>
@@ -58,30 +58,30 @@ export function rollup<A, B, C, D>
   : Activators<A & B & C & D>;
 
 export function rollup<A, B, C, D, E>
-(a: Activators<A, B & C & D & E>,
- b: Activators<B, A & C & D & E>,
- c: Activators<C, A & B & D & E>,
- d: Activators<D, A & B & C & E>,
- e: Activators<E, A & B & C & D>)
+(a: Activators<A, A & B & C & D & E>,
+ b: Activators<B, A & B & C & D & E>,
+ c: Activators<C, A & B & C & D & E>,
+ d: Activators<D, A & B & C & D & E>,
+ e: Activators<E, A & B & C & D & E>)
   : Activators<A & B & C & D & E>;
 
 export function rollup<A, B, C, D, E, F>
-(a: Activators<A, B & C & D & E & F>,
- b: Activators<B, A & C & D & E & F>,
- c: Activators<C, A & B & D & E & F>,
- d: Activators<D, A & B & C & E & F>,
- e: Activators<E, A & B & C & D & F>,
- f: Activators<F, A & B & C & D & E>)
+(a: Activators<A, A & B & C & D & E & F>,
+ b: Activators<B, A & B & C & D & E & F>,
+ c: Activators<C, A & B & C & D & E & F>,
+ d: Activators<D, A & B & C & D & E & F>,
+ e: Activators<E, A & B & C & D & E & F>,
+ f: Activators<F, A & B & C & D & E & F>)
   : Activators<A & B & C & D & E & F>;
 
 export function rollup<A, B, C, D, E, F, G>
-(a: Activators<A, B & C & D & E & F & G>,
- b: Activators<B, A & C & D & E & F & G>,
- c: Activators<C, A & B & D & E & F & G>,
- d: Activators<D, A & B & C & E & F & G>,
- e: Activators<E, A & B & C & D & F & G>,
- f: Activators<F, A & B & C & D & E & G>,
- g: Activators<G, A & B & C & D & E & F>)
+(a: Activators<A, A & B & C & D & E & F & G>,
+ b: Activators<B, A & B & C & D & E & F & G>,
+ c: Activators<C, A & B & C & D & E & F & G>,
+ d: Activators<D, A & B & C & D & E & F & G>,
+ e: Activators<E, A & B & C & D & E & F & G>,
+ f: Activators<F, A & B & C & D & E & F & G>,
+ g: Activators<G, A & B & C & D & E & F & G>)
   : Activators<A & B & C & D & E & F & G>;
 
 export function rollup(...activators: Activators<any, any>[]) {
