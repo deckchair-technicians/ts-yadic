@@ -14,3 +14,4 @@
     "lib": [ "dom", "es2017" ]
   },
   "exclude": ["lib", "node_modules"]
+}
