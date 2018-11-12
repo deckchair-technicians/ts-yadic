@@ -1,14 +1,16 @@
+
 {
-  "compilerOptions": {    
-    "declaration": true,
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
     "sourceMap": true,
     "target": "es6",
     "strict": true,
     "outDir": "./dist",
     "noImplicitAny": false,
     "skipLibCheck": true,
+    "esModuleInterop": true,
     "jsx": "preserve",
     "lib": [ "dom", "es2017" ]
   },
   "exclude": ["lib", "node_modules"]
-}
