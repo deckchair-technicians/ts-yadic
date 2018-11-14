@@ -54,5 +54,23 @@ describe("asynchronous activators", () => {
       expect(await dependencies.b).eq("value b");
       expect(await dependencies.c).eq("c saw: value a, value b");
     });
+
+    it("wait() can wrap asynchronous functions", async () => {
+      type A = {
+        a: Promise<string>;
+        b: Promise<string>;
+      }
+
+      // a depends on nothing
+      const aActivators: Activators<A> = {
+        a: async (_: A) => "value a",
+        b: wait(["a"], async (c) => `b saw ${c.a}`)
+      };
+
+      const dependencies: A = lazy(aActivators);
+
+      expect(await dependencies.a).eq("value a");
+      expect(await dependencies.b).eq("b saw value a");
+    });
   }
 );

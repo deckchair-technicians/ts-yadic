@@ -11,10 +11,10 @@ export async function resolve<T>(t: T): Promise<Resolved<T>> {
   return result;
 }
 
-export function wait<T, K extends keyof T, V>(keys: K[], fn: (c: Resolved<Pick<T, K>>) => V): (container: T) => Promise<V> {
-  return async (container: T) : Promise<V> => {
+export function wait<T, K extends keyof T, V>(keys: K[], fn: (c: Resolved<Pick<T, K>>) => V): (container: T) => Promise<Resolve<V>> {
+  return async (container: T) : Promise<Resolve<V>> => {
     const plucked = pluck(container, keys);
     const resolved = await resolve(plucked);
-    return fn(resolved);
+    return await fn(resolved) as Resolve<V>;
   }
 }
