@@ -1,4 +1,4 @@
-import {pluck} from "../util/magic";
+import * as magic from "../util/magic";
 
 export type Resolve<T> = T extends Promise<infer U> ? U : T;
 export type Resolved<T> = { [K in keyof T]: Resolve<T[K]> }
@@ -13,7 +13,7 @@ export async function resolve<T>(t: T): Promise<Resolved<T>> {
 
 export function wait<T, K extends keyof T, V>(keys: K[], fn: (c: Resolved<Pick<T, K>>) => V): (container: T) => Promise<Resolve<V>> {
   return async (container: T) : Promise<Resolve<V>> => {
-    const plucked = pluck(container, keys);
+    const plucked = magic.pluck(container, keys);
     const resolved = await resolve(plucked);
     return await fn(resolved) as Resolve<V>;
   }
