@@ -24,14 +24,11 @@ jobs:
           name: Set build number
           command: npm --no-git-tag-version version "0.0.$CIRCLE_BUILD_NUM"
       - run:
-          name: Build typescript
-          command: ./node_modules/.bin/tsc
-      - run:
           name: Create .npmrc file
           command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
       - run:
           name: Deploy to NPM
-          command: npm publish --access public
+          command: publish.sh
 workflows:
   version: 2
   main:
