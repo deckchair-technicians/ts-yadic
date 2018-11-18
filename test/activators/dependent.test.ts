@@ -1,4 +1,4 @@
-import {Activators, dependent, rollup, lazy} from "../../src";
+import {Activators, lazy, rollup} from "../../src";
 import {expect} from "chai";
 
 describe("activators.dependent", () => {
@@ -93,8 +93,11 @@ describe("activators.dependent", () => {
     });
 
     it("Supports decoration", () => {
-      const original = {a: () => "original"};
-      const decorated = {a: (thing: any) => `decorated ${thing.a}`};
+      type A = {
+        a: string
+      }
+      const original: Activators<A> = {a: () => "original"};
+      const decorated: Activators<A> = {a: (thing: any) => `decorated ${thing.a}`};
 
       const c = lazy(rollup(original, decorated));
 

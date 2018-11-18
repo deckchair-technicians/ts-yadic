@@ -1,5 +1,6 @@
 import {mapGetters} from "../util/magic";
-import {Activator, Activators} from "./index";
+import {Activator} from "./types";
+import {Activators} from "./types";
 
 export function record<T>(missing: Set<keyof T> = new Set<keyof T>()): MissingKeyFn<T> {
   return <K extends keyof T>(container: T, k: K) => {

@@ -1,5 +1,6 @@
 import {addGetter, lazyGetter, mapGetters} from "../util/magic";
-import {Activator, Activators} from "./index";
+import {Activator} from "./types";
+import {Activators} from "./types";
 
 function decoratingActivator<T, K extends keyof T>(k: K, oldActivator: Activator<T, K>, activator: Activator<T, K>): Activator<T, K> {
   return (container: T, k: K) => {
