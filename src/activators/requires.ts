@@ -1,4 +1,4 @@
-import {pluck} from "../util/magic";
+import * as magic from "../util/magic";
 
 /**
  * Return a function that plucks keys from its parameter, and passes the resulting
@@ -12,7 +12,7 @@ import {pluck} from "../util/magic";
  */
 export function requires<T, K extends keyof T, V>(keys: K[], fn: (c: Pick<T, K>) => V) : (container:T)=>V{
   return (container: T) => {
-    const plucked = pluck(container, keys);
+    const plucked = magic.pluck(container, keys);
     for (const k in plucked) {
       if (plucked[k] === undefined)
         // TODO: there should be no casting here. Need T[k] to extend undefined

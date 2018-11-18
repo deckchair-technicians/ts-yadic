@@ -1,21 +1,21 @@
-import {addGetter, lazyGetter, mapGetters} from "../util/magic";
+import * as magic from "../util/magic";
 import {Activator, Activators} from "./index";
 
 function decoratingActivator<T, K extends keyof T>(k: K, oldActivator: Activator<T, K>, activator: Activator<T, K>): Activator<T, K> {
   return (container: T, k: K) => {
     let mapper = (orginal: T, newContainer: T, k1: keyof T): any => {
       return k1 as any === k
-        ? () => lazyGetter(newContainer, k1, oldActivator(newContainer, k1 as any) as any)
+        ? () => magic.lazyGetter(newContainer, k1, oldActivator(newContainer, k1 as any) as any)
         : () => container[k1]
     };
-    const fudgedContainer: T = mapGetters(container, mapper);
+    const fudgedContainer: T = magic.mapGetters(container, mapper);
     return activator(fudgedContainer, k);
   }
 }
 
 export function dependent<T, D extends DS, DS>(activators: Activators<T, D>, dependencies: Activators<DS>): Activators<T & DS> {
   const result = <Activators<T & DS>>{};
-  const getFromDependencies = (reduced, k) => addGetter(reduced, k as keyof T & D, () => dependencies[k]);
+  const getFromDependencies = (reduced, k) => magic.addGetter(reduced, k as keyof T & D, () => dependencies[k]);
 
   Object
     .keys(dependencies)
@@ -26,10 +26,10 @@ export function dependent<T, D extends DS, DS>(activators: Activators<T, D>, dep
     if (k in reduced) // decorate
     {
       const old = reduced[k];
-      return addGetter(reduced, k, () => decoratingActivator<T & DS, K>(k, old, newActivator));
+      return magic.addGetter(reduced, k, () => decoratingActivator<T & DS, K>(k, old, newActivator));
     }
 
-    return addGetter(reduced, k, () => newActivator as Activator<T & DS, K>)
+    return magic.addGetter(reduced, k, () => newActivator as Activator<T & DS, K>)
   };
 
   return Object
