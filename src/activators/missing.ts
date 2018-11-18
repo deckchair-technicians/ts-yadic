@@ -1,4 +1,4 @@
-import * as magic from "../util/magic";
+import {mapGetters} from "../util/magic";
 import {Activator, Activators} from "./index";
 
 export function record<T>(missing: Set<keyof T> = new Set<keyof T>()): MissingKeyFn<T> {
@@ -22,5 +22,5 @@ export function missing<T>(activators: Activators<T>, fn: MissingKeyFn<T> = (t, 
     };
     return () => activator;
   };
-  return magic.mapGetters<Activators<T>, Activators<T>>(activators, mapper);
+  return mapGetters<Activators<T>, Activators<T>>(activators, mapper);
 }
