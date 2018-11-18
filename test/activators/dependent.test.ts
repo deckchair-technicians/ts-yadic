@@ -1,5 +1,4 @@
-import {Activators, dependent, rollup} from "../../src/activators";
-import {lazy} from "../../src/containers";
+import {Activators, dependent, rollup, lazy} from "../../src";
 import {expect} from "chai";
 
 describe("activators.dependent", () => {

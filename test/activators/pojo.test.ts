@@ -1,5 +1,4 @@
-import {lazy} from "../../src/containers";
-import {pojo} from "../../src/activators";
+import {pojo, lazy} from "../../src";
 import {expect} from 'chai';
 
 describe("activators.pojo", () => {

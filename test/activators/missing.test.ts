@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {lazy, missing, pojo} from "../../index";
+import {lazy, missing, pojo} from "../../src";
 
 describe("missing", () => {
   it("Just returns values from underlying object", () => {
