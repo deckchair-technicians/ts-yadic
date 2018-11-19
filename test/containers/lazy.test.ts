@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {lazy} from "../../src/index";
+import {lazy} from "../../index";
 
 describe("constainers,lazy", () => {
   it("Returns values from activator", () => {
