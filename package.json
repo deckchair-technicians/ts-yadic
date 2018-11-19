@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "mocha --require ts-node/register test/*.test.ts test/**/*.test.ts",
-    "madge:circular": "./node_modules/.bin/madge --extensions js,ts,tsx --circular src/index.ts",
+    "madge:circular": "./node_modules/.bin/madge --extensions js,ts,tsx --circular index.ts",
     "tsc": "tsc"
   },
   "dependencies": {},
