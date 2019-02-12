@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {lazy} from "../../index";
 
-describe("constainers,lazy", () => {
+describe("containers.lazy()", () => {
   it("Returns values from activator", () => {
     type Thing = {
       a: string;
