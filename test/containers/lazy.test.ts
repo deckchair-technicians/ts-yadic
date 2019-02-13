@@ -29,4 +29,22 @@ describe("containers.lazy()", () => {
 
     expect(() => c.a = "TEST").throws(/Cannot set property/);
   });
+
+  it("Appends path through container to error messages", () => {
+    type Thing = {
+      a: string;
+      b: string;
+      c: string;
+    }
+    const c = lazy<Thing>({
+      a: (thing: Thing) => thing.b,
+      b: (thing: Thing) => thing.c,
+      c: (_: Thing) => {
+        throw new Error("Oops")
+      }
+    });
+
+    expect(() => c.a)
+      .throws("a > b > c: Oops");
+  });
 });
