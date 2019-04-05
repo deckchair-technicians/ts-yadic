@@ -1,6 +1,7 @@
 import chai, {expect} from "chai";
-import {lazy} from "../../index";
 import chaiAsPromised from 'chai-as-promised';
+import {lazy} from "../../index";
+
 chai.use(chaiAsPromised);
 
 describe("containers.lazy()", () => {
@@ -56,14 +57,31 @@ describe("containers.lazy()", () => {
       b: Promise<string>;
       c: Promise<string>;
     }
+
     const c = lazy<Thing>({
-      a: async (thing: Thing) => thing.b,
-      b: async (thing: Thing) => thing.c,
+      a: async (thing: Thing) => thing.c,
+      b: async (thing: Thing) => "works",
       c: async (_: Thing) => {
         throw new Error("Oops")
       }
     });
 
-    return expect(c.a).rejectedWith("a > b > c: Oops");
+    await expect(c.a).rejectedWith("a > c: Oops");
+    await expect(c.a).rejectedWith("a > c: Oops");
+  });
+
+  it("Returns result from promises", async () => {
+    type Thing = {
+      a: Promise<string>;
+      b: Promise<string>;
+      c: Promise<string>;
+    }
+    const c = lazy<Thing>({
+      a: async (thing: Thing) => thing.b,
+      b: async (thing: Thing) => thing.c,
+      c: async (_: Thing) => 'c'
+    });
+
+    expect(c.a).eventually.eq("c");
   });
 });

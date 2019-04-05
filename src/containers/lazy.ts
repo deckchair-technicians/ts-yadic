@@ -26,20 +26,16 @@ export function lazy<T>(activators: Activators<T>): T {
 
           try {
             const result = lazyGetter(o, k as keyof T, activators[k](o, k));
-            if (!isPromise(result)) {
-              keyStack.pop();
+            if (!isPromise(result))
               return result;
-            }
-            return result.then(x => {
-              keyStack.pop();
-              return x;
-            }).catch(e => {
-              keyStack.pop();
+
+            return result.catch(e => {
               throw addPath(e)
             }) as any;
           } catch (e) {
-            keyStack.pop();
             throw addPath(e);
+          } finally {
+            keyStack.pop();
           }
         };
         return addGetter(o, k as keyof T, getter)
