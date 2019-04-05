@@ -9,11 +9,14 @@
     "madge:circular": "./node_modules/.bin/madge --extensions js,ts,tsx --circular index.ts",
     "tsc": "tsc"
   },
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
     "@types/chai": "^4.1.4",
+    "@types/chai-as-promised": "^7.1.0",
     "@types/mocha": "^5.2.5",
     "chai": "^4.1.4",
+    "chai-as-promised": "^7.1.1",
     "madge": "^3.2.0",
     "mocha": "^5.2.0",
     "ts-node": "^7.0.1",

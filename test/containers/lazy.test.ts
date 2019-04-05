@@ -1,5 +1,7 @@
-import {expect} from "chai";
+import chai, {expect} from "chai";
 import {lazy} from "../../index";
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised);
 
 describe("containers.lazy()", () => {
   it("Returns values from activator", () => {
@@ -46,5 +48,22 @@ describe("containers.lazy()", () => {
 
     expect(() => c.a)
       .throws("a > b > c: Oops");
+  });
+
+  it("Appends path through container to error messages from promises", async () => {
+    type Thing = {
+      a: Promise<string>;
+      b: Promise<string>;
+      c: Promise<string>;
+    }
+    const c = lazy<Thing>({
+      a: async (thing: Thing) => thing.b,
+      b: async (thing: Thing) => thing.c,
+      c: async (_: Thing) => {
+        throw new Error("Oops")
+      }
+    });
+
+    return expect(c.a).rejectedWith("a > b > c: Oops");
   });
 });
