@@ -10,10 +10,12 @@
     "tsc": "tsc"
   },
   "dependencies": {
+    "continuation-local-storage": "^3.2.1"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",
     "@types/chai-as-promised": "^7.1.0",
+    "@types/continuation-local-storage": "^3.2.1",
     "@types/mocha": "^5.2.5",
     "chai": "^4.1.4",
     "chai-as-promised": "^7.1.1",

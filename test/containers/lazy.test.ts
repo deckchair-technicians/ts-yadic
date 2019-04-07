@@ -56,18 +56,36 @@ describe("containers.lazy()", () => {
       a: Promise<string>;
       b: Promise<string>;
       c: Promise<string>;
+      d: Promise<string>;
     }
 
-    const c = lazy<Thing>({
-      a: async (thing: Thing) => thing.c,
-      b: async (thing: Thing) => "works",
-      c: async (_: Thing) => {
+    let activators = {
+      a: async (thing: Thing) => {
+        await new Promise((resolve) => setTimeout(resolve, Math.random() * 100));
+        return thing.c
+      },
+      b: async (thing: Thing) => {
+        await new Promise((resolve) => setTimeout(resolve, Math.random() * 100));
+        return thing.c
+      },
+      c: async (thing: Thing) => {
+        await new Promise((resolve) => setTimeout(resolve, Math.random() * 100));
+        return thing.d
+      },
+      d: async (_: Thing) => {
+        await new Promise((resolve) => setTimeout(resolve, Math.random() * 100));
         throw new Error("Oops")
       }
-    });
+    };
+    const one = lazy<Thing>(activators);
+    const two = lazy<Thing>(activators);
 
-    await expect(c.a).rejectedWith("a > c: Oops");
-    await expect(c.a).rejectedWith("a > c: Oops");
+    return Promise.all([
+      expect(one.a).rejectedWith("a > c > d: Oops"),
+      expect(two.a).rejectedWith("a > c > d: Oops"),
+      expect(one.b).rejectedWith("b > c > d: Oops"),
+      expect(two.b).rejectedWith("b > c > d: Oops")
+    ]);
   });
 
   it("Returns result from promises", async () => {
